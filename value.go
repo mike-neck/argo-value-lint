@@ -92,10 +92,18 @@ func ParseValue(value string) Value {
 	if 0 < sb.Len() {
 		t := sb.String()
 		if exp {
-			preToken := vs[len(vs)-1]
-			nextText := fmt.Sprintf("{{%s%s", preToken.Text, t)
-			preToken.Type = RawValue
-			preToken.Text = nextText
+			if 0 < len(vs) {
+				preToken := vs[len(vs)-1]
+				t = fmt.Sprintf("{{%s%s", preToken.Text, t)
+			} else {
+				t = fmt.Sprintf("{{%s", t)
+			}
+			token := Token{Type: RawValue, Text: t}
+			if 0 < len(vs) {
+				vs[len(vs)-1] = token
+			} else {
+				vs = append(vs, token)
+			}
 		} else {
 			vs = append(vs, Token{Type: RawValue, Text: t})
 		}

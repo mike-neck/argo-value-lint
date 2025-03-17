@@ -35,10 +35,24 @@ func TestParseValue(t *testing.T) {
 			},
 		},
 		{
-			title: "invalid expression should be a RawValue",
+			title: "invalid expression '{item}}' should be a RawValue",
 			value: "{item}}",
 			expected: Value{
 				{RawValue, "{item}}"},
+			},
+		},
+		{
+			title: "invalid expression '{{item}' should be a RawValue",
+			value: "{{item}",
+			expected: Value{
+				{RawValue, "{{item}"},
+			},
+		},
+		{
+			title: "invalid expression '{{item' should be a RawValue",
+			value: "{{item",
+			expected: Value{
+				{RawValue, "{{item"},
 			},
 		},
 	}
