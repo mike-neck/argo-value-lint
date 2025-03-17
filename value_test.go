@@ -34,6 +34,13 @@ func TestParseValue(t *testing.T) {
 				{Expression, "item2"},
 			},
 		},
+		{
+			title: "invalid expression should be a RawValue",
+			value: "{item}}",
+			expected: Value{
+				{RawValue, "{item}}"},
+			},
+		},
 	}
 	for _, v := range all {
 		t.Run(v.title, func(t *testing.T) {

@@ -58,6 +58,8 @@ func ParseValue(value string) Value {
 					sb.Reset()
 				}
 				i++
+			} else {
+				sb.WriteRune('{')
 			}
 		case '}':
 			if exp && i == length-1 {
