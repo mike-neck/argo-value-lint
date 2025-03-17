@@ -1,0 +1,56 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: example
+  generateName: example-workflow-
+spec:
+  entrypoint: example
+  templates:
+    - name: example
+      inputs:
+        parameters:
+          - name: range-min
+          - name: range-max
+          - name: option
+          - name: expected_duration
+            value: ""
+      steps:
+        - - name: prepare-parameter
+            template: prepare-parameter
+            arguments:
+              parameters:
+                - name: min
+                  value: "{{ inputs.parameters.range-min }}" # lint
+                - name: max
+                  value: "{{ inputs.parameters.range-max }}" # lint
+                - name: option
+                  value: "{{ inputs.parameters.option }}" # lint
+        - - name: start-process
+            template: start-process
+            arguments:
+              parameters:
+                - name: process-parameter
+                  value: "{{ steps.prepare-parameter.outputs.result }}" # lint
+        - - name: finish-process
+            template: finish-process
+            arguments:
+              parameters:
+                - name: exit-parameter
+                  value: "{{=jsonpath(steps['prepare-parameter'].outputs.result, '$.exit')}}" # lint
+                - name: exit-parameter
+                  value: "{{=jsonpath(steps['prepare-parameter'].outputs.result, '$.exit')}}" # lint
+                - name: duration
+                  value: "{{=sprig.coalesce(inputs.parameters.expected_duration, steps['start-process'].outputs.parameters.estimated_duration, '1h')}}" # lint
+        - - name: notification
+            template: notification
+            withItems:
+              - slack
+              - sns
+            arguments:
+              parameters:
+                - name: status
+                  value: "{{= steps['start-process'].status == 'Succeeded' && steps['finish-process'].status == 'Succeeded' ? 'Succeeded': 'Failed' }}" # lint
+                - name: process-id
+                  value: "{{workflow.name}}:{{workflow.uid}}" # lint
+                - name: destination
+                  value: "{{item}}" # lint
