@@ -1,6 +1,6 @@
 .PHONY: build
 build:
-	go build -o build/argo-wf-lint main.go
+	go build -o build/argo-wf-lint ./*.go
 
 
 
