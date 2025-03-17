@@ -55,6 +55,20 @@ func TestParseValue(t *testing.T) {
 				{RawValue, "{{item"},
 			},
 		},
+		{
+			title: "an expression which has parenthesis pair should be a Expression",
+			value: "{{this{test}expression}}",
+			expected: Value{
+				{Expression, "this{test}expression"},
+			},
+		},
+		{
+			title: "an expression which has parenthesis pair should be a Expression",
+			value: "{{this{test}expression}}",
+			expected: Value{
+				{Expression, "this{test}expression"},
+			},
+		},
 	}
 	for _, v := range all {
 		t.Run(v.title, func(t *testing.T) {
