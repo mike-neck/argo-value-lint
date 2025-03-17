@@ -63,10 +63,17 @@ func TestParseValue(t *testing.T) {
 			},
 		},
 		{
-			title: "an expression which has parenthesis pair should be a Expression",
-			value: "{{this{test}expression}}",
+			title: "unmatched parenthesis should be a RawValue",
+			value: "value}}value",
 			expected: Value{
-				{Expression, "this{test}expression"},
+				{RawValue, "value}}value"},
+			},
+		},
+		{
+			title: "a json should be a RawValue",
+			value: `{"type": "json", "value": "test-value"}`,
+			expected: Value{
+				{RawValue, `{"type": "json", "value": "test-value"}`},
 			},
 		},
 	}
