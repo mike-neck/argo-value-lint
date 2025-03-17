@@ -16,12 +16,26 @@ type Token struct {
 	Text string
 }
 
+func (t Token) String() string {
+	return fmt.Sprintf("%s[%s]", t.Type, t.Text)
+}
+
 type TokenType int
 
 const (
 	RawValue TokenType = iota
 	Expression
 )
+
+func (t TokenType) String() string {
+	switch t {
+	case RawValue:
+		return "RawValue"
+	case Expression:
+		return "Expression"
+	}
+	panic(fmt.Sprintf("unknown token type: %d", t))
+}
 
 func ParseValue(value string) Value {
 	vs := make(Value, 0)

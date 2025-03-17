@@ -25,6 +25,15 @@ func TestParseValue(t *testing.T) {
 				{Expression, "item"},
 			},
 		},
+		{
+			title: "multiple expressions should be a combination of RawValue and Expression",
+			value: "{{item1}}-test-{{item2}}",
+			expected: Value{
+				{Expression, "item1"},
+				{RawValue, "-test-"},
+				{Expression, "item2"},
+			},
+		},
 	}
 	for _, v := range all {
 		t.Run(v.title, func(t *testing.T) {
