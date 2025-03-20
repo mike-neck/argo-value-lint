@@ -85,6 +85,32 @@ func ParseValue(value string) Value {
 			} else {
 				sb.WriteRune('}')
 			}
+		case '\\':
+			if i == length-1 {
+				// skip this rune
+			} else {
+				switch runes[i+1] {
+				case '\\':
+					sb.WriteRune('\\')
+				case '"':
+					sb.WriteRune('"')
+				case '\'':
+					sb.WriteRune('\'')
+				case 'n':
+					sb.WriteRune('\n')
+				case 't':
+					sb.WriteRune('\t')
+				case 'r':
+					sb.WriteRune('\r')
+				case 'f':
+					sb.WriteRune('\f')
+				case '{':
+					sb.WriteRune('{')
+				case '}':
+					sb.WriteRune('}')
+				}
+				i++
+			}
 		default:
 			sb.WriteRune(runes[i])
 		}

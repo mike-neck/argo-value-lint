@@ -76,6 +76,21 @@ func TestParseValue(t *testing.T) {
 				{RawValue, `{"type": "json", "value": "test-value"}`},
 			},
 		},
+		{
+			title: "an escaped parenthesis should be a RawValue",
+			value: `\{\{item\}\}`,
+			expected: Value{
+				{RawValue, `{{item}}`},
+			},
+		},
+		{
+			title: "an escaped n should be a RawValue with new line",
+			value: `aaa\nbbb`,
+			expected: Value{
+				{RawValue, `aaa
+bbb`},
+			},
+		},
 	}
 	for _, v := range all {
 		t.Run(v.title, func(t *testing.T) {
