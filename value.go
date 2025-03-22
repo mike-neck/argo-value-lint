@@ -40,6 +40,10 @@ func (t TokenType) String() string {
 	panic(fmt.Sprintf("unknown token type: %d", t))
 }
 
+type TokenValidator interface {
+	Validate(text string) error
+}
+
 func ParseValue(value string) Value {
 	vs := make(Value, 0)
 	exp := false
