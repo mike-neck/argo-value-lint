@@ -19,19 +19,19 @@ func TestParseValue(t *testing.T) {
 			},
 		},
 		{
-			title: "single expression should be an Expression",
+			title: "single expression should be an Variable",
 			value: "{{item}}",
 			expected: Value{
-				{Expression, "item"},
+				{Variable, "item"},
 			},
 		},
 		{
-			title: "multiple expressions should be a combination of RawValue and Expression",
+			title: "multiple expressions should be a combination of RawValue and Variable",
 			value: "{{item1}}-test-{{item2}}",
 			expected: Value{
-				{Expression, "item1"},
+				{Variable, "item1"},
 				{RawValue, "-test-"},
-				{Expression, "item2"},
+				{Variable, "item2"},
 			},
 		},
 		{
@@ -56,10 +56,10 @@ func TestParseValue(t *testing.T) {
 			},
 		},
 		{
-			title: "an expression which has parenthesis pair should be a Expression",
+			title: "an expression which has parenthesis pair should be a Variable",
 			value: "{{this{test}expression}}",
 			expected: Value{
-				{Expression, "this{test}expression"},
+				{Variable, "this{test}expression"},
 			},
 		},
 		{
@@ -92,10 +92,10 @@ bbb`},
 			},
 		},
 		{
-			title: "an expression starting with '=' should be a Variable",
+			title: "an expression starting with '=' should be a Expression",
 			value: "{{=item.value}}",
 			expected: Value{
-				{Variable, "item.value"},
+				{Expression, "item.value"},
 			},
 		},
 	}

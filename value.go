@@ -81,9 +81,9 @@ func ParseValue(value string) Value {
 					exp = false
 					expression := strings.TrimSpace(sb.String())
 					if strings.HasPrefix(expression, "=") {
-						vs = append(vs, Token{Type: Variable, Text: expression[1:]})
+						vs = append(vs, Token{Type: Expression, Text: expression[1:]})
 					} else {
-						vs = append(vs, Token{Type: Expression, Text: expression})
+						vs = append(vs, Token{Type: Variable, Text: expression})
 					}
 					sb.Reset()
 					i++
