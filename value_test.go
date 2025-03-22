@@ -91,6 +91,13 @@ func TestParseValue(t *testing.T) {
 bbb`},
 			},
 		},
+		{
+			title: "an expression starting with '=' should be a Variable",
+			value: "{{=item.value}}",
+			expected: Value{
+				{Variable, "item.value"},
+			},
+		},
 	}
 	for _, v := range all {
 		t.Run(v.title, func(t *testing.T) {

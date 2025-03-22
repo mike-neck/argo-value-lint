@@ -25,6 +25,7 @@ type TokenType int
 const (
 	RawValue TokenType = iota
 	Expression
+	Variable
 )
 
 func (t TokenType) String() string {
@@ -33,6 +34,8 @@ func (t TokenType) String() string {
 		return "RawValue"
 	case Expression:
 		return "Expression"
+	case Variable:
+		return "Variable"
 	}
 	panic(fmt.Sprintf("unknown token type: %d", t))
 }
@@ -76,7 +79,12 @@ func ParseValue(value string) Value {
 			} else if exp {
 				if runes[i+1] == '}' {
 					exp = false
-					vs = append(vs, Token{Type: Expression, Text: sb.String()})
+					expression := strings.TrimSpace(sb.String())
+					if strings.HasPrefix(expression, "=") {
+						vs = append(vs, Token{Type: Variable, Text: expression[1:]})
+					} else {
+						vs = append(vs, Token{Type: Expression, Text: expression})
+					}
 					sb.Reset()
 					i++
 				} else {
