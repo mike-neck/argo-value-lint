@@ -1,6 +1,10 @@
 package main
 
-import "testing"
+import (
+	"fmt"
+	"strings"
+	"testing"
+)
 
 func TestStepLoop_Validate(t *testing.T) {
 	tests := []struct {
@@ -53,6 +57,46 @@ func TestStepLoop_Validate(t *testing.T) {
 				t.Errorf("expected error but got nil")
 			} else if !test.expectError && err != nil {
 				t.Errorf("expected no error but got %s", err)
+			}
+		})
+	}
+}
+
+func TestVariableNode_NestedCallMultipleTimes(t *testing.T) {
+	root := NewVariableNode()
+	root.Nested("workflow", func(workflow *VariableNode) {
+		workflow.Next("test")
+	})
+	root.Nested("workflow", func(workflow *VariableNode) {
+		workflow.Next("example")
+	})
+
+	tests := []struct {
+		name string
+		pass bool
+	}{
+		{
+			name: "workflow.test",
+			pass: true,
+		},
+		{
+			name: "workflow.example",
+			pass: true,
+		},
+		{
+			name: "input.test",
+			pass: false,
+		},
+	}
+	for i, test := range tests {
+		id := i + 1
+		t.Run(fmt.Sprintf("%d %s", id, test.name), func(t *testing.T) {
+			fragments := strings.Split(test.name, ".")
+			err := root.Validate(0, fragments)
+			if test.pass && err != nil {
+				t.Errorf("got unexpected error: %s", err)
+			} else if !test.pass && err == nil {
+				t.Errorf("expected error but got nil")
 			}
 		})
 	}
