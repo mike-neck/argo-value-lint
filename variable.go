@@ -44,16 +44,19 @@ type ObjectValidation interface {
 }
 
 type VariableNode struct {
-	Names    []string
-	Children map[string]ObjectValidation
+	Names     []string
+	Children  map[string]ObjectValidation
+	Patterned []*PatternedVariableNameNodeValidator
 }
 
 func NewVariableNode() *VariableNode {
 	names := make([]string, 0)
 	children := make(map[string]ObjectValidation)
+	patterned := make([]*PatternedVariableNameNodeValidator, 0)
 	return &VariableNode{
-		Names:    names,
-		Children: children,
+		Names:     names,
+		Children:  children,
+		Patterned: patterned,
 	}
 }
 
@@ -84,6 +87,11 @@ func (v *VariableNode) Validate(index int, fragments []string) error {
 	for name, validation := range v.Children {
 		if fragment == name {
 			return validation.Validate(index+1, fragments)
+		}
+	}
+	for _, validation := range v.Patterned {
+		if validation.Pattern.Match([]byte(fragment)) {
+			return validation.Validate(index, fragments)
 		}
 	}
 	return fmt.Errorf("variable not found: %s", strings.Join(fragments, "."))
@@ -124,8 +132,14 @@ func (v *VariableNode) Pattern(name string, patterns ...*regexp.Regexp) {
 	v.Children[name] = child
 }
 
-func (v *VariableNode) PatternNested(name string, pattern *regexp.Regexp, config func(variableNode *VariableNode)) {
-
+func (v *VariableNode) PatternNested(npattern *regexp.Regexp, config func(variableNode *VariableNode)) {
+	node := NewVariableNode()
+	config(node)
+	child := &PatternedVariableNameNodeValidator{
+		Pattern: npattern,
+		node:    node,
+	}
+	v.Patterned = append(v.Patterned, child)
 }
 
 type PatternedVariableNameNodeValidator struct {

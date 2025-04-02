@@ -70,6 +70,11 @@ func TestVariableNode_NestedCallMultipleTimes(t *testing.T) {
 	root.Nested("workflow", func(workflow *VariableNode) {
 		workflow.Next("example")
 	})
+	root.Nested("steps", func(steps *VariableNode) {
+		steps.PatternNested(LowerCaseWithHyphen, func(step *VariableNode) {
+			step.Next("id")
+		})
+	})
 
 	tests := []struct {
 		name string
@@ -85,6 +90,18 @@ func TestVariableNode_NestedCallMultipleTimes(t *testing.T) {
 		},
 		{
 			name: "input.test",
+			pass: false,
+		},
+		{
+			name: "steps.example.id",
+			pass: true,
+		},
+		{
+			name: "steps.example.value",
+			pass: false,
+		},
+		{
+			name: "steps.example",
 			pass: false,
 		},
 	}
