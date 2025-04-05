@@ -1,0 +1,35 @@
+tests:
+  - name: tasks.name
+    pass: yes
+  - name: tasks.step_name.id
+    pass: false
+  - name: tasks.step-name.id
+    pass: yes
+  - name: tasks.step-name.ip
+    pass: yes
+  - name: tasks.success-step.status
+    pass: yes
+  - name: tasks.failure-with-unexpected-reason.exitCode
+    pass: yes
+  - name: tasks.init-container.startedAt
+    pass: yes
+  - name: tasks.init-container.finishedAt
+    pass: yes
+  - name: tasks.init-container.hostNodeName
+    pass: yes
+  - name: tasks.init-container.parameters
+    pass: no
+  - name: tasks.init-container.outputs.parameters
+    pass: yes
+  - name: tasks.init-container.outputs.parameters.pvc-name
+    pass: yes
+  - name: tasks.init-container.outputs.parameters.pvc_name
+    pass: yes
+  - name: tasks.init-container.outputs.artifacts.pvc-name-map
+    pass: yes
+  - name: tasks.init-container.outputs.artifacts.pvc_name_map
+    pass: yes
+  - name: tasks.init-container.outputs.artifacts
+    pass: no
+  - name: tasks.init-container.outputs.result
+    pass: yes

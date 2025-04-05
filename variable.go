@@ -221,6 +221,9 @@ func (e ExpressionContext) ConfigureValidation(root *VariableNode) {
 	case StepsTemplates:
 		root.Nested("steps", stepsValidation)
 		break
+	case DAGTemplates:
+		root.Nested("tasks", tasksValidation)
+		break
 	default:
 	}
 }
@@ -284,6 +287,25 @@ func stepsValidation(steps *VariableNode) {
 		step.Next("hostNodeName")
 		step.Nested("outputs", func(outputs *VariableNode) {
 			outputs.Next("parameters")
+			outputs.Pattern("parameters", LowerCaseWithHyphenAndUnderscore)
+			outputs.Pattern("artifacts", LowerCaseWithHyphenAndUnderscore)
+		})
+	})
+}
+
+func tasksValidation(tasks *VariableNode) {
+	tasks.Next("name")
+	tasks.PatternNested(LowerCaseWithHyphen, func(task *VariableNode) {
+		task.Next("id")
+		task.Next("ip")
+		task.Next("status")
+		task.Next("exitCode")
+		task.Next("startedAt")
+		task.Next("finishedAt")
+		task.Next("hostNodeName")
+		task.Nested("outputs", func(outputs *VariableNode) {
+			outputs.Next("parameters")
+			outputs.Next("result")
 			outputs.Pattern("parameters", LowerCaseWithHyphenAndUnderscore)
 			outputs.Pattern("artifacts", LowerCaseWithHyphenAndUnderscore)
 		})

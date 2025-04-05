@@ -131,6 +131,7 @@ func TestNewValidator(t *testing.T) {
 		{"workflow", GlobalExpression},
 		{"inputs", AllTemplates},
 		{"steps", StepsTemplates},
+		{"dag", DAGTemplates},
 	}
 	for _, category := range categories {
 		t.Run(category.name, func(t *testing.T) {
