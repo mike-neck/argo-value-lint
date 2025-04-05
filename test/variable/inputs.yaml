@@ -1,0 +1,26 @@
+#jsonschema={"$schema":"https://json-schema.org/draft/2020-12/schema","type":"object","properties":{"tests":{"type":"array","items":{"type":"object","properties":{"name":{"type":"string"},"pass":{"type":"string","enum":["yes","no"]}},"required":["name","pass"]}}},"required":["tests"]}
+tests:
+  - name: inputs.parameters.test
+    pass: yes
+  - name: inputs.parameters.test-parameter-name
+    pass: yes
+  - name: inputs.parameters.test_parameter_name
+    pass: yes
+  - name: inputs.parameters.test@parameter
+    pass: no
+  - name: inputs.parameters.testParameterName
+    pass: no
+  - name: inputs.parameters
+    pass: yes
+  - name: inputs.artifacts.test
+    pass: yes
+  - name: inputs.artifacts.test-parameter-name
+    pass: yes
+  - name: inputs.artifacts.test_parameter_name
+    pass: yes
+  - name: inputs.artifacts.test@parameter
+    pass: no
+  - name: inputs.artifacts.testParameterName
+    pass: no
+  - name: inputs.artifacts
+    pass: no

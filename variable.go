@@ -192,10 +192,41 @@ type VariableValidator struct {
 
 type ExpressionContext int
 
-func NewValidator() ObjectValidation {
-	root := NewVariableNode()
-	root.Nested("workflow", workflowValidation)
+const (
+	AllTemplates ExpressionContext = iota
+	GlobalExpression
+	StepsTemplates
+	DAGTemplates
+	HTTPTemplates
+	CronWorkflows
+	RetryStrategies
+	ContainerScriptTemplates
+	LoopsTemplates
+	MetricsTemplates
+	WorkflowMetrics
+	TemplateMetrics
+)
 
+func (e ExpressionContext) ConfigureValidation(root *VariableNode) {
+	switch e {
+	case AllTemplates:
+		root.Nested("inputs", inputsValidation)
+		root.Nested("node", func(node *VariableNode) {
+			node.Next("name")
+		})
+		break
+	case GlobalExpression:
+		root.Nested("workflow", workflowValidation)
+		break
+	default:
+	}
+}
+
+func NewValidator(expressionContexts ...ExpressionContext) ObjectValidation {
+	root := NewVariableNode()
+	for _, ec := range expressionContexts {
+		ec.ConfigureValidation(root)
+	}
 	return root
 }
 
@@ -230,4 +261,10 @@ func workflowValidation(workflow *VariableNode) {
 	workflow.Next("priority")
 	workflow.Next("duration")
 	workflow.Next("scheduledTime")
+}
+
+func inputsValidation(inputs *VariableNode) {
+	inputs.Next("parameters")
+	inputs.Pattern("parameters", LowerCaseWithHyphenAndUnderscore)
+	inputs.Pattern("artifacts", LowerCaseWithHyphenAndUnderscore)
 }
