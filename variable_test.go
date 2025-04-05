@@ -152,6 +152,7 @@ func TestNewValidator(t *testing.T) {
 				t.Fatalf("no Tests found")
 				return
 			}
+			t.Log("validator", "\n", validator.debugDescription(0))
 			for _, test := range tests.Tests {
 				t.Run(test.Name, func(t *testing.T) {
 					fragments := strings.Split(test.Name, ".")

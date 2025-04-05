@@ -41,12 +41,33 @@ func (s *StepLoop) Validate(text string) error {
 
 type ObjectValidation interface {
 	Validate(index int, fragments []string) error
+	debugDescription(ident int) string
 }
 
 type VariableNode struct {
 	Names     []string
 	Children  map[string]ObjectValidation
 	Patterned []*PatternedVariableNameNodeValidator
+}
+
+func (v *VariableNode) debugDescription(ident int) string {
+	var sb strings.Builder
+	indent := strings.Repeat("    ", ident)
+	for _, name := range v.Names {
+		sb.WriteString(indent)
+		sb.WriteString("  n: ")
+		sb.WriteString(name)
+		sb.WriteRune('\n')
+	}
+	for name, child := range v.Children {
+		sb.WriteString(indent)
+		sb.WriteString("  c: ")
+		sb.WriteString(name)
+		sb.WriteRune('\n')
+		sb.WriteString(child.debugDescription(ident + 1))
+	}
+	sb.WriteString(indent)
+	return sb.String()
 }
 
 func NewVariableNode() *VariableNode {
@@ -147,6 +168,13 @@ type PatternedVariableNameNodeValidator struct {
 	node    ObjectValidation
 }
 
+func (p *PatternedVariableNameNodeValidator) debugDescription(ident int) string {
+	var sb strings.Builder
+	sb.WriteString(fmt.Sprintf("%sc: %s\n", strings.Repeat("    ", ident), p.Pattern.String()))
+	sb.WriteString(p.debugDescription(ident + 1))
+	return sb.String()
+}
+
 func (p *PatternedVariableNameNodeValidator) Validate(index int, fragments []string) error {
 	m := len(fragments)
 	if m <= index {
@@ -164,6 +192,10 @@ func (p *PatternedVariableNameNodeValidator) Validate(index int, fragments []str
 
 type PatternedVariableNameLeafValidator struct {
 	Pattern *regexp.Regexp
+}
+
+func (p *PatternedVariableNameLeafValidator) debugDescription(ident int) string {
+	return fmt.Sprintf("%sp: %s\n", strings.Repeat("    ", ident), p.Pattern.String())
 }
 
 func (p *PatternedVariableNameLeafValidator) Validate(index int, fragments []string) error {
