@@ -2,8 +2,12 @@ package main
 
 import (
 	"fmt"
+	"gopkg.in/yaml.v3"
+	"path/filepath"
 	"strings"
 	"testing"
+
+	testdataloader "github.com/peteole/testdata-loader"
 )
 
 func TestStepLoop_Validate(t *testing.T) {
@@ -114,6 +118,49 @@ func TestVariableNode_NestedCallMultipleTimes(t *testing.T) {
 				t.Errorf("got unexpected error: %s", err)
 			} else if !test.pass && err == nil {
 				t.Errorf("expected error but got nil")
+			}
+		})
+	}
+}
+
+func TestNewValidator(t *testing.T) {
+	categories := []struct {
+		name   string
+		config func(*VariableNode)
+	}{
+		{"workflows", workflowValidation},
+		{"inputs", inputsValidation},
+	}
+	for _, category := range categories {
+		t.Run(category.name, func(t *testing.T) {
+			validator := NewVariableNode()
+			validator.Nested(category.name, category.config)
+			testFile := filepath.Join("test", "variable", fmt.Sprintf("%s.yaml", category.name))
+			data := testdataloader.GetTestFile(testFile)
+			var tests struct {
+				Tests []struct {
+					Name string `yaml:"name"`
+					Pass bool   `yaml:"pass"`
+				} `yaml:"tests"`
+			}
+			err := yaml.Unmarshal(data, &tests)
+			if err != nil {
+				t.Fatalf("could not unmarshal test data: %s", err)
+				return
+			} else if len(tests.Tests) == 0 {
+				t.Fatalf("no Tests found")
+				return
+			}
+			for _, test := range tests.Tests {
+				t.Run(test.Name, func(t *testing.T) {
+					fragments := strings.Split(test.Name, ".")
+					err := validator.Validate(0, fragments)
+					if test.Pass && err != nil {
+						t.Errorf("got unexpected error: %s", err)
+					} else if !test.Pass && err == nil {
+						t.Errorf("expected error but got nil")
+					}
+				})
 			}
 		})
 	}
