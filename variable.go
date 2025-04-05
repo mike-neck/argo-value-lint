@@ -81,16 +81,6 @@ func NewVariableNode() *VariableNode {
 	}
 }
 
-type EvaluationContext func(*VariableNode)
-
-var (
-	EvaluationContexts = struct {
-		Workflow EvaluationContext
-	}{
-		Workflow: workflowValidation,
-	}
-)
-
 func (v *VariableNode) Validate(index int, fragments []string) error {
 	m := len(fragments)
 	if m <= index {
