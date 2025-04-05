@@ -287,6 +287,7 @@ func stepsValidation(steps *VariableNode) {
 		step.Next("hostNodeName")
 		step.Nested("outputs", func(outputs *VariableNode) {
 			outputs.Next("parameters")
+			outputs.Next("result")
 			outputs.Pattern("parameters", LowerCaseWithHyphenAndUnderscore)
 			outputs.Pattern("artifacts", LowerCaseWithHyphenAndUnderscore)
 		})

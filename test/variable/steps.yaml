@@ -31,3 +31,5 @@ tests:
     pass: yes
   - name: steps.init-container.outputs.artifacts
     pass: no
+  - name: steps.init-container.outputs.result
+    pass: yes
