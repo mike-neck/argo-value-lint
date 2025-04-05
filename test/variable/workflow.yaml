@@ -1,0 +1,34 @@
+#file: noinspection YAMLSchemaValidation
+tests:
+  - name: workflow.name
+    pass: yes
+  - name: workflow.namespace
+    pass: yes
+  - name: workflow.mainEntrypoint
+    pass: yes
+  - name: workflow.serviceAccountName
+    pass: yes
+  - name: workflow.uid
+    pass: yes
+  - name: workflow.parameters.name
+    pass: yes
+  - name: workflow.parameters.name-of_parameter
+    pass: yes
+  - name: workflow.parameters
+    pass: yes
+  - name: workflow.outputs.parameters.name-of_parameter
+    pass: yes
+  - name: workflow.outputs.artifacts.name-of_parameter
+    pass: yes
+  - name: workflow.annotations.json
+    pass: yes
+  - name: workflow.annotations
+    pass: no
+  - name: workflow.annotations.name-of_annotation
+    pass: yes
+  - name: workflow.labels.json
+    pass: yes
+  - name: workflow.labels
+    pass: no
+  - name: workflow.labels.name-of_annotation
+    pass: yes

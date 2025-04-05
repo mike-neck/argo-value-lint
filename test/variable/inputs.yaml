@@ -24,3 +24,7 @@ tests:
     pass: no
   - name: inputs.artifacts
     pass: no
+  - name: node.name
+    pass: yes
+  - name: node
+    pass: no

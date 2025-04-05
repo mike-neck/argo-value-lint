@@ -125,16 +125,16 @@ func TestVariableNode_NestedCallMultipleTimes(t *testing.T) {
 
 func TestNewValidator(t *testing.T) {
 	categories := []struct {
-		name   string
-		config func(*VariableNode)
+		name string
+		expr ExpressionContext
 	}{
-		{"workflows", workflowValidation},
-		{"inputs", inputsValidation},
+		{"workflow", GlobalExpression},
+		{"inputs", AllTemplates},
+		{"steps", StepsTemplates},
 	}
 	for _, category := range categories {
 		t.Run(category.name, func(t *testing.T) {
-			validator := NewVariableNode()
-			validator.Nested(category.name, category.config)
+			validator := NewValidator(category.expr)
 			testFile := filepath.Join("test", "variable", fmt.Sprintf("%s.yaml", category.name))
 			data := testdataloader.GetTestFile(testFile)
 			var tests struct {

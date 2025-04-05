@@ -1,0 +1,33 @@
+tests:
+  - name: steps.name
+    pass: yes
+  - name: steps.step_name.id
+    pass: false
+  - name: steps.step-name.id
+    pass: yes
+  - name: steps.step-name.ip
+    pass: yes
+  - name: steps.success-step.status
+    pass: yes
+  - name: steps.failure-with-unexpected-reason.exitCode
+    pass: yes
+  - name: steps.init-container.startedAt
+    pass: yes
+  - name: steps.init-container.finishedAt
+    pass: yes
+  - name: steps.init-container.hostNodeName
+    pass: yes
+  - name: steps.init-container.parameters
+    pass: no
+  - name: steps.init-container.outputs.parameters
+    pass: yes
+  - name: steps.init-container.outputs.parameters.pvc-name
+    pass: yes
+  - name: steps.init-container.outputs.parameters.pvc_name
+    pass: yes
+  - name: steps.init-container.outputs.artifacts.pvc-name-map
+    pass: yes
+  - name: steps.init-container.outputs.artifacts.pvc_name_map
+    pass: yes
+  - name: steps.init-container.outputs.artifacts
+    pass: no

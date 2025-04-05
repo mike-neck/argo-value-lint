@@ -218,6 +218,9 @@ func (e ExpressionContext) ConfigureValidation(root *VariableNode) {
 	case GlobalExpression:
 		root.Nested("workflow", workflowValidation)
 		break
+	case StepsTemplates:
+		root.Nested("steps", stepsValidation)
+		break
 	default:
 	}
 }
@@ -267,4 +270,22 @@ func inputsValidation(inputs *VariableNode) {
 	inputs.Next("parameters")
 	inputs.Pattern("parameters", LowerCaseWithHyphenAndUnderscore)
 	inputs.Pattern("artifacts", LowerCaseWithHyphenAndUnderscore)
+}
+
+func stepsValidation(steps *VariableNode) {
+	steps.Next("name")
+	steps.PatternNested(LowerCaseWithHyphen, func(step *VariableNode) {
+		step.Next("id")
+		step.Next("ip")
+		step.Next("status")
+		step.Next("exitCode")
+		step.Next("startedAt")
+		step.Next("finishedAt")
+		step.Next("hostNodeName")
+		step.Nested("outputs", func(outputs *VariableNode) {
+			outputs.Next("parameters")
+			outputs.Pattern("parameters", LowerCaseWithHyphenAndUnderscore)
+			outputs.Pattern("artifacts", LowerCaseWithHyphenAndUnderscore)
+		})
+	})
 }
