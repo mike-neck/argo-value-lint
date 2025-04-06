@@ -1,0 +1,29 @@
+tests:
+  - name: request.method
+    pass: yes
+  - name: request.url
+    pass: yes
+  - name: request.body
+    pass: yes
+  - name: request.headers
+    pass: yes
+  - name: request.headers.accept
+    pass: yes
+  - name: request.headers.content-type
+    pass: yes
+  - name: request.headers.authorization
+    pass: yes
+  - name: response.statusCode
+    pass: yes
+  - name: response.body
+    pass: yes
+  - name: response.headers
+    pass: yes
+  - name: response.headers.content-type
+    pass: yes
+  - name: response.headers.content-length
+    pass: yes
+  - name: response.method
+    pass: no
+  - name: request.statusCode
+    pass: no

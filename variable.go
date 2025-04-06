@@ -206,6 +206,7 @@ var (
 	alphaNumeric                     = regexp.MustCompilePOSIX("^[a-z][a-z0-9]+$")
 	camelCase                        = regexp.MustCompilePOSIX("^[a-z][a-z0-9]*([A-Z][a-zA-Z0-9]*)*$")
 	LowerCaseWithHyphenAndUnderscore = regexp.MustCompilePOSIX("^[a-z][a-z0-9_\\-]*$")
+	BothCasesWithHyphen              = regexp.MustCompilePOSIX("^[a-zA-Z][a-zA-Z0-9]*(-[a-zA-Z][a-zA-Z0-9]*)*$")
 )
 
 type VariableValidator struct {
@@ -246,6 +247,9 @@ func (e ExpressionContext) ConfigureValidation(root *VariableNode) {
 	case DAGTemplates:
 		root.Nested("tasks", tasksValidation)
 		break
+	case HTTPTemplates:
+		root.Nested("request", httpRequestValidation)
+		root.Nested("response", httpResponseValidation)
 	default:
 	}
 }
@@ -333,4 +337,19 @@ func tasksValidation(tasks *VariableNode) {
 			outputs.Pattern("artifacts", LowerCaseWithHyphenAndUnderscore)
 		})
 	})
+}
+
+func httpRequestValidation(request *VariableNode) {
+	request.Next("method")
+	request.Next("url")
+	request.Next("body")
+	request.Next("headers")
+	request.Pattern("headers", BothCasesWithHyphen)
+}
+
+func httpResponseValidation(response *VariableNode) {
+	response.Next("statusCode")
+	response.Next("body")
+	response.Next("headers")
+	response.Pattern("headers", BothCasesWithHyphen)
 }

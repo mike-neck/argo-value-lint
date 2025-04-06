@@ -132,6 +132,7 @@ func TestNewValidator(t *testing.T) {
 		{"inputs", AllTemplates},
 		{"steps", StepsTemplates},
 		{"dag", DAGTemplates},
+		{"http", HTTPTemplates},
 	}
 	for _, category := range categories {
 		t.Run(category.name, func(t *testing.T) {
