@@ -118,8 +118,18 @@ func (v *VariableNode) Nested(name string, config func(variableNode *VariableNod
 		children := NewVariableNode()
 		config(children)
 		v.Children[name] = children
-	} else if node, ok := ov.(*VariableNode); ok {
-		config(node)
+	} else if composite, ok := ov.(*CompositeValidator); ok {
+		child := NewVariableNode()
+		config(child)
+		composite.validators = append(composite.validators, child)
+	} else {
+		child := NewVariableNode()
+		config(child)
+		validators := []ObjectValidation{
+			ov,
+			child,
+		}
+		v.Children[name] = &CompositeValidator{validators}
 	}
 }
 
@@ -140,7 +150,17 @@ func (v *VariableNode) Pattern(name string, patterns ...*regexp.Regexp) {
 			}
 		}
 	}
-	v.Children[name] = child
+	if ov, ok := v.Children[name]; !ok {
+		v.Children[name] = child
+	} else if composite, ok := ov.(*CompositeValidator); ok {
+		composite.validators = append(composite.validators, child)
+	} else {
+		validators := []ObjectValidation{
+			ov,
+			child,
+		}
+		v.Children[name] = &CompositeValidator{validators}
+	}
 }
 
 func (v *VariableNode) PatternNested(npattern *regexp.Regexp, config func(variableNode *VariableNode)) {
@@ -170,7 +190,7 @@ func (p *PatternedVariableNameNodeValidator) Validate(index int, fragments []str
 	if m <= index {
 		return fmt.Errorf("invalid index: %d", index)
 	}
-	if index+1 == m {
+	if index == m {
 		return fmt.Errorf("variable not found: %s", strings.Join(fragments, "."))
 	}
 	fragment := fragments[index]
@@ -196,6 +216,33 @@ func (p *PatternedVariableNameLeafValidator) Validate(index int, fragments []str
 	fragment := fragments[index]
 	if p.Pattern.Match([]byte(fragment)) {
 		return nil
+	}
+	return fmt.Errorf("variable not found: %s", strings.Join(fragments, "."))
+}
+
+type CompositeValidator struct {
+	validators []ObjectValidation
+}
+
+func (v *CompositeValidator) debugDescription(ident int) string {
+	var sb strings.Builder
+	sb.WriteString(fmt.Sprintf("%scomposite:\n", strings.Repeat("    ", ident)))
+	for _, validator := range v.validators {
+		sb.WriteString(validator.debugDescription(ident + 1))
+	}
+	return sb.String()
+}
+
+func (v *CompositeValidator) Validate(index int, fragments []string) error {
+	m := len(fragments)
+	if index == m {
+		return fmt.Errorf("variable not found: %s", strings.Join(fragments, "."))
+	}
+	for _, validator := range v.validators {
+		err := validator.Validate(index, fragments)
+		if err == nil {
+			return nil
+		}
 	}
 	return fmt.Errorf("variable not found: %s", strings.Join(fragments, "."))
 }
