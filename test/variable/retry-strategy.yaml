@@ -1,0 +1,13 @@
+tests:
+  - name: lastRetry.exitCode
+    pass: yes
+  - name: lastRetry.status
+    pass: yes
+  - name: lastRetry.duration
+    pass: yes
+  - name: lastRetry.message
+    pass: yes
+  - name: lastRetry.state
+    pass: no
+  - name: lastRetry.json
+    pass: no

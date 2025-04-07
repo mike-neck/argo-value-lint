@@ -279,7 +279,7 @@ const (
 	DAGTemplates
 	HTTPTemplates
 	CronWorkflows
-	RetryStrategies
+	RetryStrategy
 	ContainerScriptTemplates
 	LoopsTemplates
 	MetricsTemplates
@@ -311,6 +311,8 @@ func (e ExpressionContext) ConfigureValidation(root *VariableNode) {
 	case CronWorkflows:
 		root.Nested("cronworkflow", cronWorkflowValidation)
 		break
+	case RetryStrategy:
+		root.Nested("lastRetry", retryStrategyValidation)
 	default:
 	}
 }
@@ -429,4 +431,11 @@ func cronWorkflowValidation(cronworkflow *VariableNode) {
 	cronworkflow.Next("lastScheduledTime")
 	cronworkflow.Next("failed")
 	cronworkflow.Next("succeeded")
+}
+
+func retryStrategyValidation(retryStrategy *VariableNode) {
+	retryStrategy.Next("exitCode")
+	retryStrategy.Next("status")
+	retryStrategy.Next("duration")
+	retryStrategy.Next("message")
 }

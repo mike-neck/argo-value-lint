@@ -134,6 +134,7 @@ func TestNewValidator(t *testing.T) {
 		{"dag", DAGTemplates},
 		{"http", HTTPTemplates},
 		{"cron-workflows", CronWorkflows},
+		{"retry-strategy", RetryStrategy},
 	}
 	for _, category := range categories {
 		t.Run(category.name, func(t *testing.T) {
