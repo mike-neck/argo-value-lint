@@ -210,12 +210,20 @@ func (p *PatternedVariableNameLeafValidator) debugDescription(ident int) string 
 
 func (p *PatternedVariableNameLeafValidator) Validate(index int, fragments []string) error {
 	m := len(fragments)
-	if index+1 != m {
+	if m <= index {
 		return fmt.Errorf("variable not found: %s", strings.Join(fragments, "."))
 	}
-	fragment := fragments[index]
-	if p.Pattern.Match([]byte(fragment)) {
-		return nil
+	if index+1 == m {
+		fragment := fragments[index]
+		if p.Pattern.Match([]byte(fragment)) {
+			return nil
+		}
+	} else {
+		fs := fragments[index:]
+		fragment := strings.Join(fs, ".")
+		if p.Pattern.Match([]byte(fragment)) {
+			return nil
+		}
 	}
 	return fmt.Errorf("variable not found: %s", strings.Join(fragments, "."))
 }
@@ -254,6 +262,8 @@ var (
 	camelCase                        = regexp.MustCompilePOSIX("^[a-z][a-z0-9]*([A-Z][a-zA-Z0-9]*)*$")
 	LowerCaseWithHyphenAndUnderscore = regexp.MustCompilePOSIX("^[a-z][a-z0-9_\\-]*$")
 	BothCasesWithHyphen              = regexp.MustCompilePOSIX("^[a-zA-Z][a-zA-Z0-9]*(-[a-zA-Z][a-zA-Z0-9]*)*$")
+	KubernetesLabels                 = regexp.MustCompilePOSIX("^([a-z][a-z0-9_\\-]*(\\.[a-z][a-z0-9_\\-]*)*/)?[a-zA-Z0-9][a-zA-Z0-9._\\-]*[a-zA-Z0-9]$")
+	KubernetesAnnnotations           = KubernetesLabels
 )
 
 type VariableValidator struct {
@@ -297,6 +307,10 @@ func (e ExpressionContext) ConfigureValidation(root *VariableNode) {
 	case HTTPTemplates:
 		root.Nested("request", httpRequestValidation)
 		root.Nested("response", httpResponseValidation)
+		break
+	case CronWorkflows:
+		root.Nested("cronworkflow", cronWorkflowValidation)
+		break
 	default:
 	}
 }
@@ -399,4 +413,20 @@ func httpResponseValidation(response *VariableNode) {
 	response.Next("body")
 	response.Next("headers")
 	response.Pattern("headers", BothCasesWithHyphen)
+}
+
+func cronWorkflowValidation(cronworkflow *VariableNode) {
+	cronworkflow.Next("name")
+	cronworkflow.Next("namespace")
+	cronworkflow.Nested("labels", func(parameter *VariableNode) {
+		parameter.Next("json")
+	})
+	cronworkflow.Pattern("labels", KubernetesLabels)
+	cronworkflow.Nested("annotations", func(parameter *VariableNode) {
+		parameter.Next("json")
+	})
+	cronworkflow.Pattern("annotations", KubernetesAnnnotations)
+	cronworkflow.Next("lastScheduledTime")
+	cronworkflow.Next("failed")
+	cronworkflow.Next("succeeded")
 }

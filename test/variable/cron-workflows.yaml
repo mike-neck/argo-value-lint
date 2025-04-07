@@ -1,0 +1,56 @@
+tests:
+  - name: cronworkflow.name
+    pass: yes
+  - name: cronworkflow.namespace
+    pass: yes
+  - name: cronworkflow.labels.app-test-label
+    pass: yes
+  - name: cronworkflow.labels.app1@test
+    pass: no
+  - name: cronworkflow.labels.app1.test
+    pass: yes
+  - name: cronworkflow.labels.app1
+    pass: yes
+  - name: cronworkflow.labels.ApplicationTEST
+    pass: yes
+  - name: cronworkflow.labels.2025-test-label
+    pass: yes
+  - name: cronworkflow.labels.example.com/example-app_test.label
+    pass: yes
+  - name: cronworkflow.labels.example.com/test
+    pass: yes
+  - name: cronworkflow.labels.test@example.com/test
+    pass: no
+  - name: cronworkflow.labels._test
+    pass: no
+  - name: cronworkflow.labels.json
+    pass: yes
+  - name: cronworkflow.annotations.app-test-label
+    pass: yes
+  - name: cronworkflow.annotations.app1@test
+    pass: no
+  - name: cronworkflow.annotations.app1.test
+    pass: yes
+  - name: cronworkflow.annotations.app1
+    pass: yes
+  - name: cronworkflow.annotations.ApplicationTEST
+    pass: yes
+  - name: cronworkflow.annotations.2025-test-label
+    pass: yes
+  - name: cronworkflow.annotations.example.com/example-app_test.label
+    pass: yes
+  - name: cronworkflow.annotations.example.com/test
+    pass: yes
+  - name: cronworkflow.annotations.test@example.com/test
+    pass: no
+  - name: cronworkflow.annotations._test
+    pass: no
+  - name: cronworkflow.annotations.json
+    pass: yes
+  - name: cronworkflow.lastScheduledTime
+    pass: yes
+  - name: cronworkflow.failed
+    pass: yes
+  - name: cronworkflow.succeeded
+    pass: yes
+

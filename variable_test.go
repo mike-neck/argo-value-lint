@@ -133,6 +133,7 @@ func TestNewValidator(t *testing.T) {
 		{"steps", StepsTemplates},
 		{"dag", DAGTemplates},
 		{"http", HTTPTemplates},
+		{"cron-workflows", CronWorkflows},
 	}
 	for _, category := range categories {
 		t.Run(category.name, func(t *testing.T) {
